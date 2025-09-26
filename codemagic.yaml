@@ -1,0 +1,34 @@
+workflows:
+  atemys-android:
+    name: ATEMYS Android Build
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+
+    environment:
+      flutter: stable
+      xcode: latest
+      groups:
+        - default
+
+    scripts:
+      - name: Install dependencies
+        script: |
+          flutter clean
+          flutter pub get
+
+      - name: Build APK universal
+        script: |
+          flutter build apk --release             --target-platform android-arm,android-arm64,android-x64             --split-per-abi
+
+      - name: Build AAB (Play Store)
+        script: |
+          flutter build appbundle --release
+
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
+      - build/app/outputs/bundle/release/*.aab
+
+    publishing:
+      email:
+        recipients:
+          - seuemail@gmail.com
